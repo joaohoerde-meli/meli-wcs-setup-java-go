@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- ── Production profile: JSON structured output, WARN level ──────────── -->
+    <springProfile name="production,prod">
+        <appender name="JSON_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <fieldNames>
+                    <timestamp>timestamp</timestamp>
+                    <level>level</level>
+                    <thread>thread</thread>
+                    <logger>logger</logger>
+                    <message>message</message>
+                    <stackTrace>stack_trace</stackTrace>
+                </fieldNames>
+                <!-- Suppress noisy Spring/Hibernate framework internals -->
+                <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                    <maxDepthPerThrowable>20</maxDepthPerThrowable>
+                    <rootCauseFirst>true</rootCauseFirst>
+                </throwableConverter>
+            </encoder>
+        </appender>
+
+        <root level="WARN">
+            <appender-ref ref="JSON_STDOUT"/>
+        </root>
+    </springProfile>
+
+    <!-- ── Development / test: human-readable console, INFO for app code ───── -->
+    <springProfile name="!production">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <!-- %X{trace_id} and %X{span_id} are injected by the OTel Java agent
+                     into MDC automatically. They will be empty when no active span exists. -->
+                <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{40} [trace=%X{trace_id} span=%X{span_id}] - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Keep noisy framework logs at WARN; enable INFO only for our code -->
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="com.meli.wcs" level="INFO"/>
+    </springProfile>
+
+</configuration>

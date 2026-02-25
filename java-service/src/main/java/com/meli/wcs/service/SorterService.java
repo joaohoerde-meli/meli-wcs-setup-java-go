@@ -7,6 +7,7 @@ import com.meli.wcs.dto.*;
 import com.meli.wcs.model.Sorter;
 import com.meli.wcs.repository.SorterRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SorterService {
@@ -41,6 +43,8 @@ public class SorterService {
     @Transactional
     public SorterDetail createSorter(TopologyPayload payload) {
         if (repository.existsBySorterId(payload.sorterId())) {
+            log.warn("sorter creation rejected: sorter_id already exists [operation=create_sorter, sorter_id={}, result=CONFLICT, remediation=use PUT /{sorterId}/topology to update an existing sorter]",
+                    payload.sorterId());
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Sorter with id '" + payload.sorterId() + "' already exists");
         }
@@ -147,8 +151,12 @@ public class SorterService {
 
     private Sorter findBySorterId(String sorterId) {
         return repository.findBySorterId(sorterId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Sorter '" + sorterId + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("sorter lookup failed: sorter_id not found [operation=find_by_sorter_id, sorter_id={}, result=NOT_FOUND, remediation=verify sorter_id exists via GET /api/sorters]",
+                            sorterId);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Sorter '" + sorterId + "' not found");
+                });
     }
 
     private SorterSummary toSummary(Sorter s) {
@@ -189,6 +197,8 @@ public class SorterService {
         try {
             return objectMapper.writeValueAsString(value);
         } catch (Exception e) {
+            log.error("JSON serialization failed: falling back to empty object [operation=to_json, type={}, result=SERIALIZATION_ERROR, remediation=check payload structure and object graph for non-serializable types]",
+                    value.getClass().getSimpleName(), e);
             return "{}";
         }
     }
@@ -198,6 +208,8 @@ public class SorterService {
         try {
             return objectMapper.readTree(json);
         } catch (Exception e) {
+            log.error("JSON parse failed: returning empty node [operation=parse_json, result=PARSE_ERROR, remediation=inspect stored constraints column in DB for corruption]",
+                    e);
             return objectMapper.createObjectNode();
         }
     }
@@ -207,6 +219,8 @@ public class SorterService {
         try {
             return objectMapper.readValue(json, new TypeReference<List<JsonNode>>() {});
         } catch (Exception e) {
+            log.error("JSON list parse failed: returning empty list [operation=parse_json_list, result=PARSE_ERROR, remediation=inspect stored nodes/edges column in DB for corruption]",
+                    e);
             return List.of();
         }
     }
