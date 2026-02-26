@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Sorter {
 
     @Id
-    @Column(length = 12, nullable = false, updatable = false)
+    @Column(length = 36, nullable = false, updatable = false)
     private String id;
 
     @Column(name = "sorter_id", unique = true, nullable = false)

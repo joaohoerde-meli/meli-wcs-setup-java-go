@@ -1,3 +1,16 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# LOCAL DEVELOPMENT ONLY
+#
+# This file is NOT used in Fury/production. On Fury:
+#   - MySQL is provisioned via Fury Database service
+#   - Secrets (DB password) are injected by Fury Secrets at runtime
+#   - OTel collector is provided by the Fury platform (no sidecar needed)
+#   - Services are deployed as independent Fury applications
+#
+# To run locally:
+#   docker compose up --build
+# ─────────────────────────────────────────────────────────────────────────────
+
 version: "3.9"
 
 services:
@@ -19,6 +32,9 @@ services:
       timeout: 5s
       retries: 10
 
+  # OTel collector — local dev only.
+  # On Fury, the platform collects traces/metrics automatically.
+  # Remove this service when deploying to Fury.
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.104.0
     container_name: wcs-otel-collector
@@ -26,8 +42,8 @@ services:
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
     ports:
-      - "4317:4317"   # OTLP gRPC
-      - "4318:4318"   # OTLP HTTP
+      - "4317:4317"
+      - "4318:4318"
 
   java-service:
     build:
@@ -39,13 +55,19 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/wcs_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: wcs_user
+      # TODO (Fury): SPRING_DATASOURCE_PASSWORD will be injected by Fury Secrets
+      # at runtime — do NOT hardcode this in production.
       SPRING_DATASOURCE_PASSWORD: wcs_pass
       SPRING_PROFILES_ACTIVE: ${SCOPE:-development}
-      # ── OpenTelemetry (Java Agent auto-instrumentation) ──────────────────
       OTEL_SERVICE_NAME: wcs-java-service
+      # Local dev: point to the otel-collector container.
+      # On Fury: remove this — the platform injects the correct endpoint.
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
       OTEL_RESOURCE_ATTRIBUTES: deployment.environment=${SCOPE:-development}
+      # Production: set OTEL_TRACES_SAMPLER=parentbased_traceidratio and OTEL_TRACES_SAMPLER_ARG=0.1
+      OTEL_TRACES_SAMPLER: ${OTEL_TRACES_SAMPLER:-always_on}
+      OTEL_TRACES_SAMPLER_ARG: ${OTEL_TRACES_SAMPLER_ARG:-}
       OTEL_INSTRUMENTATION_SPRING_WEBMVC_ENABLED: "true"
       OTEL_INSTRUMENTATION_JDBC_ENABLED: "true"
       OTEL_INSTRUMENTATION_LOGBACK_APPENDER_ENABLED: "true"
@@ -67,11 +89,15 @@ services:
       JAVA_SERVICE_URL: http://java-service:8081
       PORT: "8080"
       SCOPE: ${SCOPE:-development}
-      # ── OpenTelemetry (manual SDK) ────────────────────────────────────────
       OTEL_SERVICE_NAME: wcs-go-service
+      # Local dev: point to the otel-collector container.
+      # On Fury: remove this — the platform injects the correct endpoint.
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
       OTEL_RESOURCE_ATTRIBUTES: deployment.environment=${SCOPE:-development}
+      # Production: set OTEL_TRACES_SAMPLER=parentbased_traceidratio and OTEL_TRACES_SAMPLER_ARG=0.1
+      OTEL_TRACES_SAMPLER: ${OTEL_TRACES_SAMPLER:-always_on}
+      OTEL_TRACES_SAMPLER_ARG: ${OTEL_TRACES_SAMPLER_ARG:-}
     depends_on:
       - java-service
       - otel-collector

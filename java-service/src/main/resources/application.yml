@@ -21,3 +21,6 @@ spring:
   jackson:
     default-property-inclusion: non_null
     time-zone: UTC
+
+cors:
+  allowed-origins: "*"

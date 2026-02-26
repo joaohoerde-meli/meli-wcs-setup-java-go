@@ -1,0 +1,59 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Fury production profile
+#
+# Activated automatically when SPRING_PROFILES_ACTIVE=production (set by Fury).
+#
+# On Fury, sensitive values are injected as environment variables by the
+# Fury Secrets service — never hardcode credentials here.
+#
+# To provision secrets in Fury:
+#   fury secret create WCS_DB_PASSWORD --value "<value>" --app wcs-java-service
+#   fury secret create WCS_DB_USERNAME --value "<value>" --app wcs-java-service
+#
+# Then map them in your Fury application config (fury.yml or Fury UI):
+#   env:
+#     SPRING_DATASOURCE_USERNAME: secret:WCS_DB_USERNAME
+#     SPRING_DATASOURCE_PASSWORD: secret:WCS_DB_PASSWORD
+#     SPRING_DATASOURCE_URL: secret:WCS_DB_URL  # full JDBC URL from Fury MySQL panel
+# ─────────────────────────────────────────────────────────────────────────────
+
+server:
+  port: ${PORT:8081}
+
+spring:
+  datasource:
+    # Fury MySQL URL is provisioned via Fury Database panel and injected as secret.
+    # Format: jdbc:mysql://<fury-mysql-host>:3306/<db-name>?useSSL=true&serverTimezone=UTC
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false   # migrations already applied; never baseline in prod
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: UTC
+
+cors:
+  # Restrict to your actual frontend domain in production.
+  # Set CORS_ALLOWED_ORIGINS in Fury app config or Fury Secrets.
+  # Example: https://wcs.mercadolibre.com
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+logging:
+  level:
+    root: WARN
+    com.meli.wcs: INFO
+
+# ── OpenTelemetry (set via Fury app config or env vars) ───────────────────────
+# OTEL_TRACES_SAMPLER=parentbased_traceidratio
+# OTEL_TRACES_SAMPLER_ARG=0.1   # sample 10% of root spans in production

@@ -193,7 +193,7 @@ public class SorterService {
     }
 
     private String generateId() {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        return UUID.randomUUID().toString();
     }
 
     private String toJson(Object value) {
