@@ -19,6 +19,16 @@ services:
       timeout: 5s
       retries: 10
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.104.0
+    container_name: wcs-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+
   java-service:
     build:
       context: ./java-service
@@ -32,19 +42,18 @@ services:
       SPRING_DATASOURCE_PASSWORD: wcs_pass
       SPRING_PROFILES_ACTIVE: ${SCOPE:-development}
       # ── OpenTelemetry (Java Agent auto-instrumentation) ──────────────────
-      # The agent reads these standard env vars automatically.
-      # OTEL_EXPORTER_OTLP_ENDPOINT points to your OTel Collector or Datadog agent.
       OTEL_SERVICE_NAME: wcs-java-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_COLLECTOR_URL:-http://localhost:4318}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
       OTEL_RESOURCE_ATTRIBUTES: deployment.environment=${SCOPE:-development}
-      # Disable noisy instrumentation not relevant to this service:
       OTEL_INSTRUMENTATION_SPRING_WEBMVC_ENABLED: "true"
       OTEL_INSTRUMENTATION_JDBC_ENABLED: "true"
       OTEL_INSTRUMENTATION_LOGBACK_APPENDER_ENABLED: "true"
     depends_on:
       mysql:
         condition: service_healthy
+      otel-collector:
+        condition: service_started
     restart: on-failure
 
   go-service:
@@ -60,11 +69,12 @@ services:
       SCOPE: ${SCOPE:-development}
       # ── OpenTelemetry (manual SDK) ────────────────────────────────────────
       OTEL_SERVICE_NAME: wcs-go-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_COLLECTOR_URL:-http://localhost:4318}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
       OTEL_RESOURCE_ATTRIBUTES: deployment.environment=${SCOPE:-development}
     depends_on:
       - java-service
+      - otel-collector
     restart: on-failure
 
 volumes:

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.wcs.dto.*;
 import com.meli.wcs.model.Sorter;
 import com.meli.wcs.repository.SorterRepository;
+import com.meli.wcs.validation.TopologyValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class SorterService {
 
     private final SorterRepository repository;
     private final ObjectMapper objectMapper;
+    private final TopologyValidator validator;
 
     // ── List ──────────────────────────────────────────────────────────────────
 
@@ -42,6 +44,7 @@ public class SorterService {
 
     @Transactional
     public SorterDetail createSorter(TopologyPayload payload) {
+        validator.validate(payload);
         if (repository.existsBySorterId(payload.sorterId())) {
             log.warn("sorter creation rejected: sorter_id already exists [operation=create_sorter, sorter_id={}, result=CONFLICT, remediation=use PUT /{sorterId}/topology to update an existing sorter]",
                     payload.sorterId());
@@ -65,6 +68,7 @@ public class SorterService {
 
     @Transactional
     public SorterDetail updateTopology(String sorterId, TopologyPayload payload) {
+        validator.validate(payload);
         Sorter sorter = findBySorterId(sorterId);
 
         sorter.setSorterName(payload.sorterName());
@@ -197,9 +201,10 @@ public class SorterService {
         try {
             return objectMapper.writeValueAsString(value);
         } catch (Exception e) {
-            log.error("JSON serialization failed: falling back to empty object [operation=to_json, type={}, result=SERIALIZATION_ERROR, remediation=check payload structure and object graph for non-serializable types]",
+            log.error("JSON serialization failed [operation=to_json, type={}, result=SERIALIZATION_ERROR]",
                     value.getClass().getSimpleName(), e);
-            return "{}";
+            throw new IllegalStateException(
+                    "Failed to serialize payload field of type " + value.getClass().getSimpleName(), e);
         }
     }
 
