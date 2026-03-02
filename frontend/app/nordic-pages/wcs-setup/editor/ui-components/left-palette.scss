@@ -1,0 +1,56 @@
+@use '@andes/react/styles/themes' as andes;
+
+@import '@andes/react/styles/button/index';
+@import '@andes/react/styles/typography/index';
+
+@import '../../../../styles/variables';
+
+.left-palette {
+  width: $editor-palette-width;
+  flex-shrink: 0;
+  padding: andes.$andes-spacing-padding-small;
+  border-right: 1px solid andes.$andes-color-border-primary;
+  background: andes.$andes-color-surface-primary-idle;
+  overflow-y: auto;
+
+  &__title {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: andes.$andes-color-text-secondary;
+    margin-bottom: andes.$andes-spacing-gap-small;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: andes.$andes-spacing-gap-xtiny;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: andes.$andes-spacing-padding-xtiny andes.$andes-spacing-padding-small;
+    border: 1px solid andes.$andes-color-border-primary;
+    border-radius: andes.$andes-border-radius-s;
+    cursor: grab;
+    background: andes.$andes-color-surface-secondary-idle;
+    user-select: none;
+    transition: background 0.1s ease;
+
+    &:hover {
+      background: andes.$andes-color-surface-secondary-hover;
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &__hint {
+    margin-top: andes.$andes-spacing-gap-small;
+    text-align: center;
+  }
+}

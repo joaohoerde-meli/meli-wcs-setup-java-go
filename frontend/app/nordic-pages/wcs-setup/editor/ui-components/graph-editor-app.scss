@@ -1,0 +1,34 @@
+@use '@andes/react/styles/themes' as andes;
+
+@import '@andes/react/styles/button/index';
+@import '@andes/react/styles/typography/index';
+@import '@andes/react/styles/textfield/index';
+@import '@andes/react/styles/modal/index';
+@import '@andes/react/styles/progress-indicator-circular/index';
+@import '@andes/react/styles/badge/index';
+
+@import '../../../../styles/variables';
+
+// @xyflow/react base styles are injected via JS import in the app
+// (see graph-editor-app.jsx) — no static @import needed
+
+.graph-editor-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: andes.$andes-color-surface-secondary-idle;
+
+  &__workspace {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  &__flow {
+    flex: 1;
+    height: 100%;
+    position: relative;
+  }
+}

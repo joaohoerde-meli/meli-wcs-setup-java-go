@@ -1,0 +1,30 @@
+@use '@andes/react/styles/themes' as andes;
+
+@import '@andes/react/styles/button/index';
+@import '@andes/react/styles/typography/index';
+
+@import '../../../../styles/variables';
+
+.top-toolbar {
+  display: flex;
+  align-items: center;
+  gap: andes.$andes-spacing-gap-small;
+  padding: andes.$andes-spacing-padding-small andes.$andes-spacing-padding-medium;
+  height: $editor-toolbar-height;
+  border-bottom: 1px solid andes.$andes-color-border-primary;
+  background: andes.$andes-color-surface-primary-idle;
+  flex-shrink: 0;
+
+  &__actions {
+    display: flex;
+    gap: andes.$andes-spacing-gap-small;
+    align-items: center;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: andes.$andes-spacing-gap-xtiny;
+    margin-left: andes.$andes-spacing-gap-medium;
+  }
+}

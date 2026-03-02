@@ -1,0 +1,14 @@
+// WCS Setup — shared SCSS tokens
+// Import Andes themes to access semantic tokens throughout the app.
+// Component-level SCSS files import this file for token access.
+@use '@andes/react/styles/themes' as andes;
+
+// Editor-specific dimensions
+$editor-toolbar-height: 56px;
+$editor-palette-width: 220px;
+$editor-properties-width: 280px;
+$editor-bottom-bar-height: 48px;
+
+// Grid and card dimensions
+$sorter-card-min-width: 280px;
+$sorter-card-gap: andes.$andes-spacing-gap-medium;

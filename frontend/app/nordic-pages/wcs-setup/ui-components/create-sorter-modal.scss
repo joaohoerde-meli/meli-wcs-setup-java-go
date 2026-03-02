@@ -1,0 +1,20 @@
+@use '@andes/react/styles/themes' as andes;
+
+.create-sorter-modal {
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: andes.$andes-spacing-gap-medium;
+  }
+
+  &__field {
+    width: 100%;
+  }
+
+  &__server-error {
+    padding: andes.$andes-spacing-padding-small;
+    border-radius: andes.$andes-border-radius-s;
+    background: andes.$andes-color-feedback-negative-secondary;
+    margin-bottom: andes.$andes-spacing-gap-small;
+  }
+}

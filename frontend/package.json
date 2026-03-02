@@ -1,0 +1,33 @@
+{
+  "name": "wcs-setup",
+  "version": "1.0.0",
+  "description": "WCS Topology Setup — Nordic v9 + Andes X frontend",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nordic dev",
+    "build": "nordic build",
+    "start": "nordic start",
+    "dist": "nordic dist",
+    "watch": "nordic dev --watch",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint .",
+    "lint:css": "stylelint '**/*.scss'",
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "i18n:gettext": "nordic i18n gettext"
+  },
+  "dependencies": {
+    "nordic": "^9.0.0",
+    "@andes/react": "^2.0.0",
+    "@xyflow/react": "^12.0.0",
+    "nanoid": "^5.0.0"
+  },
+  "devDependencies": {
+    "@nordic-dev/linting-tools": "^2.0.0",
+    "nordic-dev": "^9.0.0"
+  },
+  "prettier": "@meli-lint/eslint-config-base/prettier-config",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

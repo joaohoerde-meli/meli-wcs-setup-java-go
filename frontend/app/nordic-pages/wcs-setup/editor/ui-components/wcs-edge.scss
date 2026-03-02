@@ -1,0 +1,21 @@
+@use '@andes/react/styles/themes' as andes;
+
+.wcs-edge {
+  stroke: andes.$andes-color-border-accent-primary;
+  stroke-width: 2;
+
+  &--selected {
+    stroke: andes.$andes-color-border-accent-primary;
+    stroke-width: 3;
+  }
+
+  &__label {
+    background: andes.$andes-color-surface-primary-idle;
+    border: 1px solid andes.$andes-color-border-primary;
+    border-radius: andes.$andes-border-radius-xs;
+    padding: 2px 6px;
+    font-size: 11px;
+    color: andes.$andes-color-text-secondary;
+    white-space: nowrap;
+  }
+}

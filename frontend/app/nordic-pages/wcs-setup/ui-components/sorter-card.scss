@@ -1,0 +1,13 @@
+@use '@andes/react/styles/themes' as andes;
+
+.sorter-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: andes.$andes-spacing-gap-small;
+  align-items: center;
+
+  &__error {
+    width: 100%;
+    margin-top: andes.$andes-spacing-gap-xtiny;
+  }
+}

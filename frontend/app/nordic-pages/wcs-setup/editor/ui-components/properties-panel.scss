@@ -1,0 +1,33 @@
+@use '@andes/react/styles/themes' as andes;
+
+@import '@andes/react/styles/typography/index';
+@import '@andes/react/styles/textfield/index';
+@import '@andes/react/styles/button/index';
+
+@import '../../../../styles/variables';
+
+.properties-panel {
+  width: $editor-properties-width;
+  flex-shrink: 0;
+  border-left: 1px solid andes.$andes-color-border-primary;
+  background: andes.$andes-color-surface-primary-idle;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: andes.$andes-spacing-padding-small andes.$andes-spacing-padding-medium;
+    border-bottom: 1px solid andes.$andes-color-border-primary;
+    flex-shrink: 0;
+  }
+
+  &__fields {
+    padding: andes.$andes-spacing-padding-medium;
+    display: flex;
+    flex-direction: column;
+    gap: andes.$andes-spacing-gap-small;
+  }
+}

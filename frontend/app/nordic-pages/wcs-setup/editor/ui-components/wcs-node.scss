@@ -1,0 +1,48 @@
+@use '@andes/react/styles/themes' as andes;
+
+@import '@andes/react/styles/typography/index';
+@import '@andes/react/styles/badge/index';
+
+.wcs-node {
+  padding: andes.$andes-spacing-padding-small;
+  border: 2px solid andes.$andes-color-border-primary;
+  border-radius: andes.$andes-border-radius-m;
+  background: andes.$andes-color-surface-primary-idle;
+  min-width: 120px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &--selected {
+    border-color: andes.$andes-color-border-accent-primary;
+    box-shadow: 0 0 0 3px andes.$andes-color-border-accent-primary;
+  }
+
+  &__header {
+    margin-bottom: andes.$andes-spacing-gap-xtiny;
+  }
+
+  &__type-badge {
+    font-size: 10px;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    word-break: break-word;
+  }
+
+  &__capacity {
+    font-size: 10px;
+  }
+
+  // Color variants via badge
+  &--brand    { border-color: andes.$andes-color-border-accent-primary; }
+  &--positive { border-color: andes.$andes-color-border-positive-primary; }
+  &--informative { border-color: andes.$andes-color-border-informative-primary; }
+  &--caution  { border-color: andes.$andes-color-border-caution-primary; }
+  &--neutral  { border-color: andes.$andes-color-border-primary; }
+}

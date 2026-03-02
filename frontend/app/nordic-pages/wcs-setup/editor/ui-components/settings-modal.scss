@@ -1,0 +1,30 @@
+@use '@andes/react/styles/themes' as andes;
+
+@import '@andes/react/styles/textfield/index';
+@import '@andes/react/styles/button/index';
+@import '@andes/react/styles/typography/index';
+
+.settings-modal {
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: andes.$andes-spacing-gap-medium;
+  }
+
+  &__hint {
+    margin-bottom: andes.$andes-spacing-gap-tiny;
+  }
+
+  &__section {
+    margin-top: andes.$andes-spacing-gap-small;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: andes.$andes-color-text-secondary;
+  }
+
+  &__dimensions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: andes.$andes-spacing-gap-small;
+  }
+}

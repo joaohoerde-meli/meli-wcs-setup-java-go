@@ -31,5 +31,8 @@ Thumbs.db
 # Docker
 .docker/
 
+# Claude Code (skills + local settings — not part of the project)
+.claude/
+
 # Logs
 *.log

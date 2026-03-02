@@ -1,0 +1,57 @@
+@use '@andes/react/styles/themes' as andes;
+
+@import '@andes/react/styles/typography/index';
+
+@import '../../../../styles/variables';
+
+.bottom-bar {
+  height: $editor-bottom-bar-height;
+  display: flex;
+  align-items: center;
+  padding: 0 andes.$andes-spacing-padding-medium;
+  border-top: 1px solid andes.$andes-color-border-primary;
+  background: andes.$andes-color-surface-primary-idle;
+  flex-shrink: 0;
+  overflow-x: auto;
+
+  &--has-errors {
+    background: andes.$andes-color-feedback-caution-secondary;
+  }
+
+  &__errors {
+    display: flex;
+    align-items: center;
+    gap: andes.$andes-spacing-gap-small;
+    flex-wrap: nowrap;
+  }
+
+  &__error-list {
+    display: flex;
+    gap: andes.$andes-spacing-gap-small;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  &__error-item {
+    background: none;
+    border: 1px solid andes.$andes-color-border-caution-primary;
+    border-radius: andes.$andes-border-radius-xs;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: andes.$andes-color-text-caution;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      background: andes.$andes-color-feedback-caution-secondary;
+    }
+  }
+
+  &__ok {
+    display: flex;
+    align-items: center;
+    gap: andes.$andes-spacing-gap-xtiny;
+  }
+}
