@@ -28,8 +28,8 @@ export const SorterCardActions = ({ sorterId, sorterName }) => {
       return;
     }
 
-    // Reload the page to reflect the deletion
-    window.location.reload();
+    // Navigate to list to reflect the deletion with fresh SSR data
+    window.location.href = '/wcs-setup';
   };
 
   return (
@@ -61,6 +61,7 @@ export const SorterCardActions = ({ sorterId, sorterName }) => {
       <ConfirmationModal
         open={confirmOpen}
         title={i18n.gettext('Delete {0}?', sorterName)}
+        ariaLabel={i18n.gettext('Confirm deletion of {0}', sorterName)}
         onDismiss={() => setConfirmOpen(false)}
         actions={
           <>

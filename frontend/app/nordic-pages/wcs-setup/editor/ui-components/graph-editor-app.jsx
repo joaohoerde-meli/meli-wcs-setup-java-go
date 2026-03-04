@@ -14,8 +14,9 @@ import {
 import { nanoid } from 'nanoid';
 import { Typography } from '@andes/react/typography';
 
-import { createSorter } from '../../../../../services/wcs-service';
-import { updateTopology } from '../../../../../services/wcs-service';
+import { createSorter, updateTopology } from '../../../../../services/wcs-service';
+
+const SAFE_SORTER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,64}$/;
 
 import { WcsNode } from './wcs-node';
 import { WcsEdge } from './wcs-edge';
@@ -291,7 +292,13 @@ const GraphEditorInner = ({ initialData, isNew }) => {
     }
 
     if (isNew && result.data?.sorter_id) {
-      window.location.href = `/wcs-setup/editor/${result.data.sorter_id}`;
+      const newSorterId = result.data.sorter_id;
+
+      if (SAFE_SORTER_ID_PATTERN.test(newSorterId)) {
+        window.location.href = `/wcs-setup/editor/${newSorterId}`;
+      } else {
+        setSaveError(i18n.gettext('Could not navigate to the new sorter. Please refresh the page.'));
+      }
     }
   }, [isNew, sorterId, sorterName, nodes, edges, constraints, handleValidate, i18n]);
 
@@ -368,14 +375,7 @@ const GraphEditorInner = ({ initialData, isNew }) => {
         )}
       </div>
 
-      <BottomBar
-        errors={validationErrors}
-        onErrorClick={(err) => {
-          // Surface the error — simple alert for now
-          // eslint-disable-next-line no-alert
-          window.alert(err);
-        }}
-      />
+      <BottomBar errors={validationErrors} />
 
       <SettingsModal
         open={settingsOpen}

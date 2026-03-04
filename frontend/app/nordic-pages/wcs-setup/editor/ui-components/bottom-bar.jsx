@@ -3,7 +3,7 @@ import { Typography } from '@andes/react/typography';
 import Warning from '@andes/react/icons/Warning';
 import Success from '@andes/react/icons/CheckCircle';
 
-export const BottomBar = ({ errors, onErrorClick }) => {
+export const BottomBar = ({ errors }) => {
   const i18n = getI18n();
   const hasErrors = errors && errors.length > 0;
 
@@ -20,16 +20,9 @@ export const BottomBar = ({ errors, onErrorClick }) => {
             {i18n.gettext('{0} validation error(s):', errors.length)}
           </Typography>
           <ul className="bottom-bar__error-list">
-            {errors.map((err, idx) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <li key={idx}>
-                <button
-                  type="button"
-                  className="bottom-bar__error-item"
-                  onClick={() => onErrorClick(err)}
-                >
-                  {err}
-                </button>
+            {errors.map((err) => (
+              <li key={err} className="bottom-bar__error-item">
+                {err}
               </li>
             ))}
           </ul>

@@ -9,6 +9,7 @@ import Add from '@andes/react/icons/Add';
 import { createSorter } from '../../../../services/wcs-service';
 
 const EMPTY_FORM = { sorterId: '', sorterName: '' };
+const SAFE_SORTER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,64}$/;
 
 export const CreateSorterModal = () => {
   const i18n = getI18n();
@@ -91,7 +92,14 @@ export const CreateSorterModal = () => {
     }
 
     // Navigate to the editor for the newly created sorter
-    window.location.href = `/wcs-setup/editor/${data.sorter_id}`;
+    const newSorterId = data.sorter_id;
+
+    if (SAFE_SORTER_ID_PATTERN.test(newSorterId)) {
+      window.location.href = `/wcs-setup/editor/${newSorterId}`;
+    } else {
+      setSaving(false);
+      setServerError(i18n.gettext('Could not navigate to the new sorter. Please refresh the page.'));
+    }
   };
 
   return (

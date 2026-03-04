@@ -5,6 +5,8 @@ import { Typography } from '@andes/react/typography';
 import { getSorter } from '../../../../services/wcs-service';
 import { GraphEditorApp } from './ui-components/graph-editor-app';
 
+const SAFE_SORTER_ID_PATTERN = /^[a-zA-Z0-9_-]{1,64}$/;
+
 const EditorPage = ({ sorterData, isNew, error }) => {
   const i18n = getI18n();
 
@@ -57,6 +59,13 @@ export const getServerSideProps = async (req) => {
     return {
       props: { sorterData: null, isNew: true, error: null },
       settings: { title: req.i18n.gettext('New sorter — WCS Setup') },
+    };
+  }
+
+  if (!SAFE_SORTER_ID_PATTERN.test(sorterId)) {
+    return {
+      props: { sorterData: null, isNew: false, error: true },
+      settings: { title: req.i18n.gettext('Editor — WCS Setup') },
     };
   }
 
